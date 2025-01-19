@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة التحقق للمستخدم</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #121212;
+            color: #00FF00;
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* لتمكين الزر من التثبيت في أعلى اليمين */
+        }
+
+        .container {
+            background-color: #1a1a1a;
+            border: 2px solid #00FF00;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+            width: 320px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #00FF00;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            border: 1px solid #00FF00;
+            color: #00FF00;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            transition: border 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            border: 2px solid #00FF00;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00FF00;
+            color: #121212;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #00CC00;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFA500;
+        }
+
+        .loading-container span {
+            margin-left: 10px;
+        }
+
+        .loading {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #FFA500;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            color: #FF3333;
+        }
+
+        /* زر تحديث السيرفر في أعلى اليمين مع حجم أصغر */
+        .refresh-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #00FF00; /* نفس لون الزر الأساسي */
+            color: #121212;
+            padding: 3px 8px; /* حجم أصغر */
+            font-size: 10px; /* حجم خط أصغر */
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background-color: #00CC00;
+            border-color: #00CC00;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- زر تحديث السيرفر -->
+    <button class="refresh-btn" onclick="redirectToServer()">تحديث السيرفر</button>
+
+    <div class="container">
+        <h2>صفحة التحقق للمستخدم</h2>
+
+        <label for="userKey">مفتاح API:</label>
+        <input type="text" id="userKey" placeholder="أدخل مفتاح API">
+
+        <label for="userId">المعرف (ID):</label>
+        <input type="text" id="userId" placeholder="أدخل المعرف (ID)">
+
+        <button onclick="verifyForUser()">تحقق</button>
+
+        <div id="userStatus" class="status"></div>
+    </div>
+
+    <script>
+        function verifyForUser() {
+            const userKey = document.getElementById("userKey").value;
+            const userId = document.getElementById("userId").value;
+
+            const keys = JSON.parse(localStorage.getItem("keys")) || [];
+            const key = keys.find(k => k.apiKey === userKey && k.adminId === userId);
+
+            const statusDiv = document.getElementById("userStatus");
+
+            if (!key) {
+                displayStatus("التحقق فشل. المفتاح أو المعرف غير صحيح.", "error");
+            } else if (key.isBanned) {
+                displayLoadingStatus("هذا الكود محظور. جاري البحث عن المشكلة...");
+
+                // الانتظار لمدة 5 ثوانٍ ثم إعادة التوجيه
+                setTimeout(() => {
+                    window.location.href = "https://example.com/problem"; // استبدل الرابط بالرابط المطلوب
+                }, 5000);
+            } else if (key.isDisabled) {
+                displayLoadingStatus("المفتاح معطل. لا يمكن استخدامه. جاري البحث عن المشكلة...");
+
+                setTimeout(() => {
+                    window.location.href = "https://example.com/problem"; // استبدل الرابط بالرابط المطلوب
+                }, 5000);
+            } else {
+                displayStatus("تم التحقق بنجاح. المفتاح والمعرف صحيحان.", "success");
+                displayLoadingStatus("جاري إعادة التوجيه...");
+
+                // الانتظار لمدة 3 ثوانٍ ثم إعادة التوجيه
+                setTimeout(() => {
+                    window.location.href = "https://example.com/success"; // استبدل الرابط بالرابط المطلوب
+                }, 3000);
+            }
+        }
+
+        function displayStatus(message, type) {
+            const statusDiv = document.getElementById("userStatus");
+            statusDiv.innerHTML = message;
+            statusDiv.className = 'status ' + type;
+        }
+
+        function displayLoadingStatus(message) {
+            const statusDiv = document.getElementById("userStatus");
+            statusDiv.innerHTML = `
+                <div class="loading-container">
+                    <div class="loading"></div>
+                    <span>${message}</span>
+                </div>
+            `;
+        }
+
+        // دالة إعادة التوجيه إلى رابط تحديث السيرفر
+        function redirectToServer() {
+            window.location.href = "https://user1730655102878.requestly.tech/usercode.html?";
+        }
+    </script>
+</body>
+</html>
